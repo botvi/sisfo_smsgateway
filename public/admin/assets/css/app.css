@@ -31,7 +31,7 @@ a {
 	top: 0;
 	bottom: 0;
 	left: 0;
-	background: #fff;
+	background: #3a99ff;
 	border-right: 0 solid #e4e4e4;
 	z-index: 11;
 	box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%)!important;
@@ -1776,7 +1776,7 @@ a {
 }
 
 .bg-login {
-	background-image: url(../images/login-images/bg-login-img.jpg);
+	background-image: url(https://www.smp1dawekudus.sch.id/wp-content/uploads/2020/06/foto-formal-background-biru-4.jpg);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
