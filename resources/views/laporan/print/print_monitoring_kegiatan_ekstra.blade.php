@@ -6,7 +6,7 @@
     <title>Laporan Monitoring Kegiatan Ekstrakurikuler</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', Times, serif;
             margin: 0;
             padding: 20px;
             font-size: 12px;
@@ -76,8 +76,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>LAPORAN MONITORING KEGIATAN EKSTRAKURIKULER</h1>
-        <p>Sistem Monitoring Siswa</p>
+        <h1>DATA KEGIATAN EKSTRAKURIKULER SISWA/I</h1>
+        <h1>SMP NEGERI 2 INUMAN</h1>
         <p>Tanggal Cetak: {{ date('d/m/Y H:i') }}</p>
     </div>
 
@@ -127,8 +127,10 @@
     @endif
 
     <div class="footer">
-        <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
-        <p>Oleh: {{ auth()->user()->nama ?? 'Sistem' }}</p>
+        <p>Inuman, {{ date('d/m/Y H:i:s') }}</p>
+        <br>
+        <br>
+        <p>{{ $k->ketuaExtra->nama ?? 'Ketua Ekstrakurikuler' }}</p>
     </div>
 
     <div class="no-print" style="margin-top: 20px; text-align: center;">

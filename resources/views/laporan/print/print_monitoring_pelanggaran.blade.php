@@ -6,7 +6,7 @@
     <title>Laporan Monitoring Pelanggaran</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', Times, serif;
             margin: 0;
             padding: 20px;
             font-size: 12px;
@@ -79,17 +79,17 @@
 </head>
 <body>
     <div class="header">
-        <h1>LAPORAN MONITORING PELANGGARAN</h1>
-        <p>Sistem Monitoring Siswa</p>
+        <h1>DATA PELANGGARAN SISWA/I</h1>
+        <h1>SMP NEGERI 2 INUMAN</h1>
         <p>Tanggal Cetak: {{ date('d/m/Y H:i') }}</p>
     </div>
 
     <div class="info-section">
         @if($kelasInfo)
             <p><strong>Kelas:</strong> {{ $kelasInfo->nama_kelas }}</p>
-            <p><strong>Wali Kelas:</strong> {{ $kelasInfo->waliKelas->nama ?? 'Belum ada wali kelas' }}</p>
-        @else
-            <p><strong>Filter:</strong> Semua Kelas</p>
+        @endif
+        @if($monitoringPelanggaran && $monitoringPelanggaran->first())
+            <p><strong>Guru BK:</strong> {{ $monitoringPelanggaran->first()->guruBk->nama ?? 'Belum ada guru BK' }}</p>
         @endif
         @if($pelanggaranInfo)
             <p><strong>Jenis Pelanggaran:</strong> {{ $pelanggaranInfo->nama_pelanggaran }}</p>
@@ -161,8 +161,10 @@
     @endif
 
     <div class="footer">
-        <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
-        <p>Oleh: {{ auth()->user()->nama ?? 'Sistem' }}</p>
+        <p>Inuman, {{ date('d/m/Y H:i:s') }}</p>
+        <br>
+        <br>
+        <p>{{ $mp->guruBk->nama ?? 'Guru BK' }}</p>
     </div>
 
     <div class="no-print" style="margin-top: 20px; text-align: center;">
