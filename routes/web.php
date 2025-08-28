@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:guru_bk'])->group(function () {
     Route::get('monitoring-pelanggaran', [MonitoringPelanggaranController::class, 'index'])->name('monitoring-pelanggaran.index');
     Route::get('monitoring-pelanggaran/formkirimpesan', [MonitoringPelanggaranController::class, 'formkirimpesan'])->name('monitoring-pelanggaran.formkirimpesan');
     Route::post('monitoring-pelanggaran/kirimpesan', [MonitoringPelanggaranController::class, 'kirimpesan'])->name('monitoring-pelanggaran.kirimpesan');
+    Route::post('monitoring-pelanggaran/kirimpesan-multiple', [MonitoringPelanggaranController::class, 'kirimpesanMultiple'])->name('monitoring-pelanggaran.kirimpesan-multiple');
     Route::get('monitoring-pelanggaran/get-ortu/{siswa_id}', [MonitoringPelanggaranController::class, 'getOrangTua'])->name('monitoring-pelanggaran.get-ortu');
 });
 
