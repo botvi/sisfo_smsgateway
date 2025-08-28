@@ -46,44 +46,50 @@ class MonitoringAbsensiController extends Controller
             'siswa_id' => 'required|exists:siswas,id',
             'pesan' => 'required|string|max:400'
         ]);
-
+    
         // Ambil data siswa untuk mendapatkan nomor telepon orang tua
         $siswa = Siswa::with('orangTuaWali')->find($request->siswa_id);
         
         if (!$siswa || !$siswa->orangTuaWali) {
-            Alert::error('Error', 'Data siswa atau orang tua tidak ditemukan');
-            return redirect()->back();
+            return response()->json([
+                'success' => false,
+                'message' => 'Data siswa atau orang tua tidak ditemukan'
+            ]);
         }
-
+    
         // Cek apakah nomor HP orang tua tersedia
         if (empty($siswa->orangTuaWali->no_hp_ortu)) {
-            Alert::error('Error', 'Nomor HP orang tua tidak tersedia');
-            return redirect()->back();
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor HP orang tua tidak tersedia'
+            ]);
         }
-
+    
         $message = "Kepada Yth. Bpk/Ibu Orang Tua dari {$siswa->nama_siswa},\n\n";
         $message .= "Kami informasikan bahwa:\n";
         $message .= "{$request->pesan}\n\n";
         $message .= "Terima kasih.\nWali Kelas.";
         
-
+    
         // Ambil konfigurasi API dari database
         $smsApi = SmsApi::first();
         if (!$smsApi) {
-            Alert::error('Error', 'Konfigurasi SMS API tidak ditemukan');
-            return redirect()->back();
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi SMS API tidak ditemukan'
+            ]);
         }
-
+    
         // Data untuk dikirim sesuai format API
         $telepon = $siswa->orangTuaWali->no_hp_ortu;
-
+    
         // Setup API key dan headers
         $apiKey = $smsApi->api_key;
         $headers = array(
             "Authorization: Basic " . base64_encode("apikey:" . $apiKey),
             "Content-Type: application/json"
         );
-
+    
         // Format data sesuai endpoint API
         $data = json_encode([
             [
@@ -91,7 +97,7 @@ class MonitoringAbsensiController extends Controller
                 'text' => $message
             ]
         ]);
-
+    
         // Kirim request ke API SMS Text
         $ch = curl_init("https://api.smstext.app/push");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -105,7 +111,7 @@ class MonitoringAbsensiController extends Controller
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
         curl_close($ch);
-
+    
         // Log untuk debugging
         Log::info('SMS API Request', [
             'telepon' => $telepon,
@@ -113,7 +119,7 @@ class MonitoringAbsensiController extends Controller
             'http_code' => $httpCode,
             'curl_error' => $curlError
         ]);
-
+    
         // Cek apakah ada error curl
         if ($curlError) {
             Log::error('Curl Error: ' . $curlError);
@@ -128,12 +134,12 @@ class MonitoringAbsensiController extends Controller
                 'response' => $results,
                 'raw_response' => $response
             ]);
-
+    
             // Cek response API untuk menentukan status
             $status = 'Gagal';
             $alertMessage = 'Pesan gagal dikirim';
             $alertType = 'error';
-
+    
             // Jika response berisi array dengan ID (contoh: ["f3724eda-6230-4c60-b875-744fb01778ae"])
             if (is_array($results) && !empty($results) && is_string($results[0])) {
                 $status = 'Terkirim';
@@ -141,7 +147,7 @@ class MonitoringAbsensiController extends Controller
                 $alertType = 'success';
             }
         }
-
+    
         // Simpan ke database
         $monitoringAbsensi = MonitoringAbsensi::create([
             'wali_kelas_id' => Auth::user()->id,
@@ -150,14 +156,13 @@ class MonitoringAbsensiController extends Controller
             'status' => $status,
             'tanggal_pengiriman' => now(),
         ]);
-
-        if ($alertType === 'success') {
-            Alert::success('Berhasil', $alertMessage);
-        } else {
-            Alert::error('Gagal', $alertMessage);
-        }
-        
-        return redirect()->route('monitoring-absensi.index');
+    
+        return response()->json([
+            'success' => $alertType === 'success',
+            'message' => $alertMessage,
+            'status' => $status,
+            'siswa' => $siswa->nama_siswa
+        ]);
     }
 
     public function getOrangTua($siswa_id)
